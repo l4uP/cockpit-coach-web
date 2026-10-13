@@ -371,6 +371,11 @@ button {
     max-height: calc(100vh - 17rem);
 }
 
+/* Test 5 (ADR-115): problem text and "Weiter" sit above the picture – keep the whole picture on screen. */
+.problem-text ~ .picture .instruments {
+    max-height: calc(100vh - 21rem);
+}
+
 .answers {
     display: flex;
     flex-wrap: wrap;
