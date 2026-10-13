@@ -62,7 +62,7 @@ window.cockpitCoach = {
     unlockAudio: () => {
         const audio = window.cockpitCoach.audio;
         audio.context ??= new AudioContext();
-        audio.context.resume();
+        audio.context.resume().catch(() => { });
     },
 
     loadClips: async (names) => {
@@ -74,11 +74,35 @@ window.cockpitCoach = {
         }));
     },
 
+    stopClips: () => {
+        const audio = window.cockpitCoach.audio;
+        audio.playing.forEach(source => {
+            try {
+                source.stop();
+            } catch {
+                // already ended
+            }
+        });
+        audio.playing = [];
+    },
+
+    // Re-checks the OFFLINE lamp when the service worker takes over this page (first visit, update).
+    watchOffline: (layout) => navigator.serviceWorker?.addEventListener('controllerchange',
+        () => layout.invokeMethodAsync('OfflineChanged', !!navigator.serviceWorker.controller)),
+
     // Plays the clips one after the other with gapSeconds between them; a new call cuts the one still playing off.
     playClips: (names, gapSeconds) => {
         const audio = window.cockpitCoach.audio;
-        audio.playing.forEach(source => source.stop());
-        audio.playing = [];
+        if (!audio.context) {
+            return;
+        }
+
+        // After the laptop slept the context may stand still: start it again (the user started the run, so it may).
+        if (audio.context.state !== 'running') {
+            audio.context.resume().catch(() => { });
+        }
+
+        window.cockpitCoach.stopClips();
         let at = audio.context.currentTime + 0.02;
         for (const name of names) {
             const buffer = audio.buffers.get(name);
@@ -95,3 +119,6 @@ window.cockpitCoach = {
         }
     },
 };
+
+// Ask the browser to keep the offline copy and the runs even when the disk gets full (installed apps get it at once).
+navigator.storage?.persist?.().catch(() => { });

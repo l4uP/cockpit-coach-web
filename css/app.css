@@ -110,6 +110,14 @@ main {
     padding: 1.4rem 1.25rem 2rem;
 }
 
+.foot {
+    max-width: 66rem;
+    margin: 0 auto;
+    padding: 0 1.25rem 1rem;
+    color: var(--muted);
+    font: 11px/1.4 var(--mono);
+}
+
 /* ---------- Type ---------- */
 
 h1 {

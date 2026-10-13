@@ -1,4 +1,4 @@
-/* Manifest version: rofV9CJ9 */
+/* Manifest version: Y6YIlBmi */
 // Caution! Be sure you understand the caveats before publishing an application with
 // offline support. See https://aka.ms/blazor-offline-considerations
 
@@ -7,7 +7,9 @@ self.addEventListener('install', event => event.waitUntil(onInstall(event)));
 self.addEventListener('activate', event => event.waitUntil(onActivate(event)));
 self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 
-const cacheNamePrefix = 'offline-cache-';
+// Own prefix: l4up.github.io is shared by all Pages sites of the account, and an activating worker deletes the
+// caches of its prefix that are not its own.
+const cacheNamePrefix = 'cockpit-coach-offline-';
 const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
 const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.json$/, /\.css$/, /\.woff$/, /\.png$/, /\.jpe?g$/, /\.gif$/, /\.ico$/, /\.blat$/, /\.dat$/, /\.webmanifest$/, /\.wav$/ ];
 const offlineAssetsExclude = [ /^service-worker\.js$/ ];
@@ -25,6 +27,11 @@ async function onInstall(event) {
         .filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset.url)))
         .map(asset => new Request(asset.url, { integrity: asset.hash, cache: 'no-cache' }));
     await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
+
+    // A new version takes over as soon as it is complete, not only after every window of the app was closed: one visit
+    // online is enough to have the newest version offline (ADR-110). The app loads everything at start, so an open
+    // window keeps working on what it already has.
+    self.skipWaiting();
 }
 
 async function onActivate(event) {
@@ -32,9 +39,11 @@ async function onActivate(event) {
 
     // Delete unused caches
     const cacheKeys = await caches.keys();
+    // ('offline-cache-' is the name the first published version of this app used, 2026-10-13.)
     await Promise.all(cacheKeys
-        .filter(key => key.startsWith(cacheNamePrefix) && key !== cacheName)
+        .filter(key => (key.startsWith(cacheNamePrefix) && key !== cacheName) || key.startsWith('offline-cache-'))
         .map(key => caches.delete(key)));
+    await self.clients.claim();
 }
 
 async function onFetch(event) {
