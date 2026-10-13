@@ -50,6 +50,7 @@ window.cockpitCoach = {
     // While an exercise runs, reloading or closing the window asks first (the run would be lost).
     guardUnload: on => {
         const c = window.cockpitCoach;
+        c.running = on; // ADR-121: no update reload during a run
         c.unloadGuard ??= e => { e.preventDefault(); e.returnValue = ''; };
         if (on) {
             window.addEventListener('beforeunload', c.unloadGuard);
@@ -97,6 +98,36 @@ window.cockpitCoach = {
             }
         });
         audio.playing = [];
+    },
+
+    // ADR-121: updates with a short time online, no new installation. The browser is asked for a new version at the start
+    // and whenever the network comes back; the new service worker loads everything and takes over (skipWaiting). Then the
+    // app reloads itself – at once on the start page, otherwise as soon as no exercise runs and the start page is shown
+    // again – so the new version is there for the next offline use. A first install (no worker before) is no update.
+    watchUpdates: registration => {
+        const c = window.cockpitCoach;
+        const sw = navigator.serviceWorker;
+        const update = () => registration.update().catch(() => { });
+        update();
+        window.addEventListener('online', update);
+        const wasControlled = !!sw.controller;
+        const atHome = () => new URL(document.baseURI).pathname === location.pathname;
+        const reloadWhenFree = () => {
+            if (!c.running && atHome()) {
+                location.reload();
+                return true;
+            }
+
+            return false;
+        };
+        sw.addEventListener('controllerchange', () => {
+            if (wasControlled && !c.updatePending) {
+                c.updatePending = true;
+                if (!reloadWhenFree()) {
+                    const timer = setInterval(() => reloadWhenFree() && clearInterval(timer), 2000);
+                }
+            }
+        });
     },
 
     // Re-checks the OFFLINE lamp when the service worker takes over this page (first visit, update).
