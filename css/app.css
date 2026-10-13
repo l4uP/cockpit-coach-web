@@ -1,0 +1,650 @@
+/* Laptop version (ADR-110) in the look of the Windows app: the Nachtflug theme (ADR-056, App/Themes/Nachtflug.xaml). */
+:root {
+    color-scheme: dark;
+    --bg: #0d1310;
+    --surface: #141d18;
+    --input: #0a0f0c;
+    --soft: #1b2821;
+    --pressed: #223128;
+    --fg: #e1ece3;
+    --muted: #92a898;
+    --line: #22302a;
+    --strong-line: #314339;
+    --green: #7fd08c;
+    --accent: #4cbb5e;
+    --accent-hover: #68cb78;
+    --on-accent: #06140a;
+    --cta: #e7a33e;
+    --cta-hover: #f2b458;
+    --cta-pressed: #c98a2c;
+    --on-cta: #1a1408;
+    --warn: #f0b75a;
+    --problem: #f28b82;
+    --lamp-ready: #12281a;
+    --lamp-ready-line: #2e6b3c;
+    --lamp-warn: #2a2010;
+    --lamp-warn-line: #6b4b17;
+    --mono: "Cascadia Mono", Consolas, "Roboto Mono", ui-monospace, monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.5 "Segoe UI", system-ui, Roboto, sans-serif;
+}
+
+a {
+    color: var(--green);
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* ---------- Header with lamps ---------- */
+
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 1.25rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--fg);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .brand img {
+        width: 26px;
+        height: 26px;
+    }
+
+    .brand span {
+        color: var(--muted);
+        font-weight: 400;
+    }
+
+.lamps {
+    display: flex;
+    gap: 6px;
+}
+
+.lamp {
+    padding: 3px 7px;
+    border: 1px solid var(--strong-line);
+    border-radius: 4px;
+    color: var(--muted);
+    font: 11px/1.4 var(--mono);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+}
+
+    .lamp.ready {
+        border-color: var(--lamp-ready-line);
+        background: var(--lamp-ready);
+        color: var(--green);
+    }
+
+    .lamp.warn {
+        border-color: var(--lamp-warn-line);
+        background: var(--lamp-warn);
+        color: var(--warn);
+    }
+
+main {
+    max-width: 66rem;
+    margin: 0 auto;
+    padding: 1.4rem 1.25rem 2rem;
+}
+
+/* ---------- Type ---------- */
+
+h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+    h1:focus {
+        outline: none; /* the router focuses the heading after each navigation */
+    }
+
+h2 {
+    margin: 1.4rem 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.eyebrow {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+
+.lead {
+    max-width: 48rem;
+    margin: 0 0 1.25rem;
+    color: var(--muted);
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.hint {
+    color: var(--warn);
+}
+
+.pre {
+    white-space: pre-line;
+}
+
+.center {
+    text-align: center;
+}
+
+.mono {
+    font-family: var(--mono);
+}
+
+/* ---------- Buttons ---------- */
+
+button {
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.primary, .cta {
+    padding: 0.55rem 1.15rem;
+    border: 0;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.primary {
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+    .primary:hover {
+        background: var(--accent-hover);
+    }
+
+.cta {
+    background: var(--cta);
+    color: var(--on-cta);
+}
+
+    .cta:hover {
+        background: var(--cta-hover);
+    }
+
+    .cta:active {
+        background: var(--cta-pressed);
+    }
+
+    .primary:disabled, .cta:disabled {
+        opacity: 0.6;
+        cursor: default;
+    }
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.25rem 0;
+}
+
+    .actions a {
+        color: var(--muted);
+        text-decoration: none;
+    }
+
+        .actions a:hover {
+            color: var(--fg);
+        }
+
+/* ---------- Test folder (start page) ---------- */
+
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14.5rem, 1fr));
+    gap: 8px;
+}
+
+.tile {
+    display: block;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    color: inherit;
+    text-decoration: none;
+}
+
+    .tile:hover {
+        background: var(--soft);
+    }
+
+    .tile:focus-visible {
+        border-color: var(--accent);
+        outline: none;
+    }
+
+.tile-title {
+    min-height: 2.4em;
+    margin-top: 3px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tile-value {
+    margin-top: 4px;
+    font: 20px/1.3 var(--mono);
+}
+
+.tile-note {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.card-panel {
+    margin-top: 1.25rem;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+}
+
+/* ---------- Level choice ---------- */
+
+.levels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0.75rem 0 1rem;
+}
+
+.level {
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+}
+
+    .level:hover {
+        background: var(--soft);
+    }
+
+    .level.on {
+        border: 2px solid var(--accent);
+        padding: 5px 13px;
+    }
+
+/* ---------- Running exercise ---------- */
+
+.run-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.run-title {
+    color: var(--fg);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+}
+
+.run-time {
+    font-family: var(--mono);
+}
+
+.timebar {
+    height: 4px;
+    margin: 0.45rem 0 1rem;
+    border-radius: 2px;
+    background: var(--strong-line);
+    overflow: hidden;
+}
+
+    .timebar .fill {
+        height: 100%;
+        background: var(--accent);
+    }
+
+        .timebar .fill.warn {
+            background: var(--warn);
+        }
+
+        .timebar .fill.accent {
+            background: var(--cta);
+        }
+
+.picture {
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+}
+
+.instruments {
+    display: block;
+    width: 100%;
+    max-height: calc(100vh - 11rem);
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.question {
+    font-size: 1.35rem;
+    font-weight: 400;
+}
+
+.answers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.answer {
+    min-width: 8.5rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    font: 1.1rem/1.3 var(--mono);
+}
+
+    .answer:hover {
+        border-color: var(--accent);
+        background: var(--soft);
+    }
+
+.verdict {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+    .verdict.good, .mark.good {
+        color: var(--green);
+    }
+
+    .verdict.bad, .mark.bad {
+        color: var(--problem);
+    }
+
+    .verdict.warn {
+        color: var(--warn);
+    }
+
+.problem-text {
+    max-width: 46rem;
+    font-size: 1.1rem;
+}
+
+.entry {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+    .entry input {
+        width: 9rem;
+        padding: 0.45rem 0.7rem;
+        border: 1px solid var(--strong-line);
+        border-radius: 4px;
+        background: var(--input);
+        color: var(--fg);
+        font: 1.3rem/1.3 var(--mono);
+    }
+
+        .entry input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+.unit {
+    color: var(--muted);
+}
+
+/* ---------- Quiz (ADR-113) ---------- */
+
+.choices {
+    display: grid;
+    gap: 8px;
+    max-width: 46rem;
+}
+
+.choice {
+    display: flex;
+    gap: 0.8rem;
+    align-items: baseline;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    text-align: left;
+}
+
+    .choice:hover:not(:disabled) {
+        border-color: var(--accent);
+        background: var(--soft);
+    }
+
+    .choice:disabled {
+        cursor: default;
+    }
+
+    .choice.good {
+        border: 2px solid var(--accent);
+        padding: calc(0.75rem - 1px) calc(1rem - 1px);
+    }
+
+    .choice.bad {
+        border: 2px solid var(--problem);
+        padding: calc(0.75rem - 1px) calc(1rem - 1px);
+    }
+
+    .choice.dim {
+        opacity: 0.55;
+    }
+
+.choice-key {
+    color: var(--muted);
+    font-family: var(--mono);
+}
+
+.file {
+    color: var(--muted);
+}
+
+/* ---------- Seven answer fields of the chain arithmetic ---------- */
+
+.fields {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+    max-width: 44rem;
+    margin: 2rem auto;
+}
+
+.field {
+    height: 4rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    font: 1.4rem/1 var(--mono);
+}
+
+    .field.on {
+        border: 2px solid var(--accent);
+        background: var(--pressed);
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    .field:disabled {
+        cursor: default;
+    }
+
+/* ---------- Two back ---------- */
+
+.listen {
+    display: flex;
+    justify-content: center;
+    margin: 3rem 0 1rem;
+}
+
+.listen-ring {
+    display: grid;
+    place-items: center;
+    width: 12rem;
+    height: 12rem;
+    border: 3px solid var(--strong-line);
+    border-radius: 50%;
+    color: var(--muted);
+    font: 1.1rem/1.3 var(--mono);
+}
+
+    .listen-ring.good {
+        border-color: var(--accent);
+        color: var(--green);
+    }
+
+    .listen-ring.bad {
+        border-color: var(--problem);
+        color: var(--problem);
+    }
+
+    .listen-ring.warn {
+        border-color: var(--warn);
+        color: var(--warn);
+    }
+
+/* ---------- Results ---------- */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 8px;
+}
+
+.card {
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+}
+
+    .card.weak {
+        border: 2px solid var(--problem);
+        padding: 9px 11px;
+    }
+
+.card-title {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.card-value {
+    font: 1.35rem/1.3 var(--mono);
+}
+
+.card-note {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+    .list li, .problem {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+.problem summary {
+    cursor: pointer;
+}
+
+.mark {
+    display: inline-block;
+    width: 1.2rem;
+    font-weight: 700;
+}
+
+/* ---------- Blazor frame ---------- */
+
+#blazor-error-ui {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    width: 100%;
+    padding: 0.6rem 1.25rem;
+    background: #2b1616;
+    color: var(--problem);
+}
+
+    #blazor-error-ui .dismiss {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.75rem;
+        cursor: pointer;
+    }
+
+.loading-progress {
+    position: absolute;
+    inset: 20vh 0 auto 0;
+    display: block;
+    width: 8rem;
+    height: 8rem;
+    margin: 0 auto;
+}
+
+    .loading-progress circle {
+        fill: none;
+        stroke: var(--strong-line);
+        stroke-width: 0.6rem;
+        transform-origin: 50% 50%;
+        transform: rotate(-90deg);
+    }
+
+        .loading-progress circle:last-child {
+            stroke: var(--accent);
+            stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+            transition: stroke-dasharray 0.05s ease-in-out;
+        }
+
+.loading-progress-text {
+    position: absolute;
+    inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+    .loading-progress-text:after {
+        content: var(--blazor-load-percentage-text, "Lädt");
+    }
