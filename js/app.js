@@ -29,12 +29,13 @@ window.cockpitCoach = {
                 return null;
             }
         },
-        set: (key, value) => {
+        // "ok", "full" when the quota is used up, "blocked" when the page may not store anything.
+        write: (key, value) => {
             try {
                 localStorage.setItem(key, value);
-                return true;
-            } catch {
-                return false;
+                return 'ok';
+            } catch (e) {
+                return e && (e.name === 'QuotaExceededError' || e.code === 22) ? 'full' : 'blocked';
             }
         },
         remove: key => {
@@ -44,6 +45,17 @@ window.cockpitCoach = {
                 // nothing stored, nothing to remove
             }
         },
+    },
+
+    // While an exercise runs, reloading or closing the window asks first (the run would be lost).
+    guardUnload: on => {
+        const c = window.cockpitCoach;
+        c.unloadGuard ??= e => { e.preventDefault(); e.returnValue = ''; };
+        if (on) {
+            window.addEventListener('beforeunload', c.unloadGuard);
+        } else {
+            window.removeEventListener('beforeunload', c.unloadGuard);
+        }
     },
 
     download: (fileName, text) => {
@@ -76,6 +88,7 @@ window.cockpitCoach = {
 
     stopClips: () => {
         const audio = window.cockpitCoach.audio;
+        audio.calls = (audio.calls ?? 0) + 1; // a play still waiting for the context gives up
         audio.playing.forEach(source => {
             try {
                 source.stop();
@@ -91,18 +104,24 @@ window.cockpitCoach = {
         () => layout.invokeMethodAsync('OfflineChanged', !!navigator.serviceWorker.controller)),
 
     // Plays the clips one after the other with gapSeconds between them; a new call cuts the one still playing off.
-    playClips: (names, gapSeconds) => {
+    playClips: async (names, gapSeconds) => {
         const audio = window.cockpitCoach.audio;
         if (!audio.context) {
             return;
         }
 
-        // After the laptop slept the context may stand still: start it again (the user started the run, so it may).
+        window.cockpitCoach.stopClips();
+        const call = audio.calls = audio.calls + 1;
+
+        // After the laptop slept the context may stand still: start it again (the user started the run, so it may) and
+        // only then plan the clips, so the first one is not late. At most 0.5 s, then play anyway.
         if (audio.context.state !== 'running') {
-            audio.context.resume().catch(() => { });
+            await Promise.race([audio.context.resume().catch(() => { }), new Promise(r => setTimeout(r, 500))]);
+            if (call !== audio.calls) {
+                return; // a newer call or a stop came meanwhile
+            }
         }
 
-        window.cockpitCoach.stopClips();
         let at = audio.context.currentTime + 0.02;
         for (const name of names) {
             const buffer = audio.buffers.get(name);

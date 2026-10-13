@@ -366,6 +366,11 @@ button {
     font-weight: 400;
 }
 
+/* In the feedback of test 4 the verdict, a text line and "Weiter" sit around the picture: keep them on screen. */
+.verdict ~ .picture .instruments {
+    max-height: calc(100vh - 17rem);
+}
+
 .answers {
     display: flex;
     flex-wrap: wrap;
@@ -432,6 +437,30 @@ button {
 .unit {
     color: var(--muted);
 }
+
+/* ---------- "Test abbrechen?" (ADR-111 like the app) ---------- */
+
+.abort-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    background: rgba(5, 8, 6, 0.75);
+}
+
+.abort {
+    max-width: 28rem;
+    padding: 18px 22px;
+    border: 1px solid var(--strong-line);
+    border-radius: 8px;
+    background: var(--surface);
+}
+
+    .abort h2 {
+        margin-top: 0.3rem;
+    }
 
 /* ---------- Quiz (ADR-113) ---------- */
 
